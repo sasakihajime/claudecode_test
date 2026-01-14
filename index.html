@@ -27,6 +27,44 @@
             <span id="todoCount">0 個のタスク</span>
             <button id="clearCompleted">完了済みを削除</button>
         </div>
+
+        <div class="detailed-stats">
+            <div class="stats-section">
+                <h3>📊 基本統計</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">全タスク</span>
+                        <span class="stat-value" id="totalCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">未完了</span>
+                        <span class="stat-value active" id="activeCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">完了</span>
+                        <span class="stat-value completed" id="completedCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">完了率</span>
+                        <span class="stat-value rate" id="completionRate">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h3>📅 今日の活動</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">今日追加</span>
+                        <span class="stat-value added" id="todayAdded">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">今日完了</span>
+                        <span class="stat-value completed" id="todayCompleted">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>

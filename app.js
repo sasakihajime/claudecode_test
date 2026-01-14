@@ -16,6 +16,14 @@ class TodoApp {
         this.todoCount = document.getElementById('todoCount');
         this.clearCompleted = document.getElementById('clearCompleted');
         this.filterBtns = document.querySelectorAll('.filter-btn');
+
+        // 詳細統計要素
+        this.totalCountEl = document.getElementById('totalCount');
+        this.activeCountEl = document.getElementById('activeCount');
+        this.completedCountEl = document.getElementById('completedCount');
+        this.completionRateEl = document.getElementById('completionRate');
+        this.todayAddedEl = document.getElementById('todayAdded');
+        this.todayCompletedEl = document.getElementById('todayCompleted');
     }
 
     attachEventListeners() {
@@ -39,7 +47,8 @@ class TodoApp {
             id: Date.now(),
             text: text,
             completed: false,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            completedAt: null
         };
 
         this.todos.push(todo);
@@ -52,6 +61,7 @@ class TodoApp {
         const todo = this.todos.find(t => t.id === id);
         if (todo) {
             todo.completed = !todo.completed;
+            todo.completedAt = todo.completed ? new Date().toISOString() : null;
             this.saveTodos();
             this.render();
         }
@@ -141,10 +151,35 @@ class TodoApp {
     }
 
     updateStats() {
+        const totalCount = this.todos.length;
         const activeCount = this.todos.filter(t => !t.completed).length;
+        const completedCount = this.todos.filter(t => t.completed).length;
+        const completionRate = totalCount > 0 ? Math.floor((completedCount / totalCount) * 100) : 0;
+
+        // 今日の日付を取得（YYYY-MM-DD形式）
+        const today = new Date().toISOString().split('T')[0];
+
+        // 今日追加されたタスク数
+        const todayAdded = this.todos.filter(t => {
+            return t.createdAt && t.createdAt.split('T')[0] === today;
+        }).length;
+
+        // 今日完了したタスク数
+        const todayCompleted = this.todos.filter(t => {
+            return t.completedAt && t.completedAt.split('T')[0] === today;
+        }).length;
+
+        // 基本統計の更新
         this.todoCount.textContent = `${activeCount} 個のタスク`;
 
-        const completedCount = this.todos.filter(t => t.completed).length;
+        // 詳細統計の更新（HTML要素がある場合のみ）
+        if (this.totalCountEl) this.totalCountEl.textContent = totalCount;
+        if (this.activeCountEl) this.activeCountEl.textContent = activeCount;
+        if (this.completedCountEl) this.completedCountEl.textContent = completedCount;
+        if (this.completionRateEl) this.completionRateEl.textContent = `${completionRate}%`;
+        if (this.todayAddedEl) this.todayAddedEl.textContent = todayAdded;
+        if (this.todayCompletedEl) this.todayCompletedEl.textContent = todayCompleted;
+
         this.clearCompleted.style.display = completedCount > 0 ? 'block' : 'none';
     }
 
