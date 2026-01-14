@@ -153,8 +153,13 @@ class TodoApp {
     }
 
     loadTodos() {
-        const stored = localStorage.getItem('todos');
-        return stored ? JSON.parse(stored) : [];
+        try {
+            const stored = localStorage.getItem('todos');
+            return stored ? JSON.parse(stored) : [];
+        } catch (error) {
+            console.error('Failed to load todos from localStorage:', error);
+            return [];
+        }
     }
 }
 
