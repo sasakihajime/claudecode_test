@@ -135,6 +135,17 @@ h1 {
     color: #999;
 }
 
+.todo-item.archived {
+    background: #e8e8e8;
+    border-left: 4px solid #999;
+    opacity: 0.7;
+}
+
+.todo-item.archived .todo-text {
+    color: #666;
+    font-style: italic;
+}
+
 .todo-checkbox {
     width: 20px;
     height: 20px;
@@ -157,10 +168,43 @@ h1 {
     cursor: pointer;
     transition: background 0.3s;
     font-size: 14px;
+    margin-left: 5px;
 }
 
 .delete-btn:hover {
     background: #ee5a52;
+}
+
+.archive-btn {
+    padding: 6px 15px;
+    background: #ffa500;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.archive-btn:hover {
+    background: #ff8c00;
+}
+
+.unarchive-btn {
+    padding: 6px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.unarchive-btn:hover {
+    background: #45a049;
 }
 
 .stats {

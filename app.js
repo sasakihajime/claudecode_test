@@ -39,6 +39,7 @@ class TodoApp {
             id: Date.now(),
             text: text,
             completed: false,
+            archived: false,
             createdAt: new Date().toISOString()
         };
 
@@ -63,6 +64,24 @@ class TodoApp {
         this.render();
     }
 
+    archiveTodo(id) {
+        const todo = this.todos.find(t => t.id === id);
+        if (todo) {
+            todo.archived = true;
+            this.saveTodos();
+            this.render();
+        }
+    }
+
+    unarchiveTodo(id) {
+        const todo = this.todos.find(t => t.id === id);
+        if (todo) {
+            todo.archived = false;
+            this.saveTodos();
+            this.render();
+        }
+    }
+
     clearCompletedTodos() {
         this.todos = this.todos.filter(t => !t.completed);
         this.saveTodos();
@@ -80,11 +99,13 @@ class TodoApp {
     getFilteredTodos() {
         switch(this.currentFilter) {
             case 'active':
-                return this.todos.filter(t => !t.completed);
+                return this.todos.filter(t => !t.completed && !t.archived);
             case 'completed':
-                return this.todos.filter(t => t.completed);
+                return this.todos.filter(t => t.completed && !t.archived);
+            case 'archived':
+                return this.todos.filter(t => t.archived);
             default:
-                return this.todos;
+                return this.todos.filter(t => !t.archived);
         }
     }
 
@@ -102,7 +123,9 @@ class TodoApp {
                 ? 'タスクがありません'
                 : this.currentFilter === 'active'
                     ? '未完了のタスクはありません'
-                    : '完了済みのタスクはありません';
+                    : this.currentFilter === 'completed'
+                        ? '完了済みのタスクはありません'
+                        : 'アーカイブされたタスクはありません';
             this.todoList.appendChild(emptyMessage);
         } else {
             filteredTodos.forEach(todo => {
@@ -116,35 +139,54 @@ class TodoApp {
 
     createTodoElement(todo) {
         const li = document.createElement('li');
-        li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+        li.className = `todo-item ${todo.completed ? 'completed' : ''} ${todo.archived ? 'archived' : ''}`;
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.className = 'todo-checkbox';
         checkbox.checked = todo.completed;
+        checkbox.disabled = todo.archived;
         checkbox.addEventListener('change', () => this.toggleTodo(todo.id));
 
         const span = document.createElement('span');
         span.className = 'todo-text';
         span.textContent = todo.text;
 
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+
+        if (todo.archived) {
+            const unarchiveBtn = document.createElement('button');
+            unarchiveBtn.className = 'unarchive-btn';
+            unarchiveBtn.textContent = '復元';
+            unarchiveBtn.addEventListener('click', () => this.unarchiveTodo(todo.id));
+            buttonContainer.appendChild(unarchiveBtn);
+        } else {
+            const archiveBtn = document.createElement('button');
+            archiveBtn.className = 'archive-btn';
+            archiveBtn.textContent = 'アーカイブ';
+            archiveBtn.addEventListener('click', () => this.archiveTodo(todo.id));
+            buttonContainer.appendChild(archiveBtn);
+        }
+
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = '削除';
         deleteBtn.addEventListener('click', () => this.deleteTodo(todo.id));
+        buttonContainer.appendChild(deleteBtn);
 
         li.appendChild(checkbox);
         li.appendChild(span);
-        li.appendChild(deleteBtn);
+        li.appendChild(buttonContainer);
 
         return li;
     }
 
     updateStats() {
-        const activeCount = this.todos.filter(t => !t.completed).length;
+        const activeCount = this.todos.filter(t => !t.completed && !t.archived).length;
         this.todoCount.textContent = `${activeCount} 個のタスク`;
 
-        const completedCount = this.todos.filter(t => t.completed).length;
+        const completedCount = this.todos.filter(t => t.completed && !t.archived).length;
         this.clearCompleted.style.display = completedCount > 0 ? 'block' : 'none';
     }
 
